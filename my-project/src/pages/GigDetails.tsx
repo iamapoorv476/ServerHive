@@ -5,7 +5,7 @@ import { createBid, getBidsForGig, hireBid } from '../store/slices/bidsSlice';
 import { DollarSign, Clock, User, MessageSquare, Send, Award } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { Gig, Bid } from '../types';
+//import { Gig,Bid } from '@/types';
 
 interface BidFormData {
   message: string;
