@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { getMe } from './store/slices/authSlice';
 import { initializeSocket, disconnectSocket, getSocket } from './utils/socket';
 import toast, { Toaster } from 'react-hot-toast';
+import { clearGigs } from './store/slices/gigsSlice'; // ADD THIS
+import { clearBids } from './store/slices/bidsSlice'; // ADD THIS
 import { useAppDispatch,useAppSelector } from './store/hooks';
 import { BidHiredEvent } from './types';
 import Navbar from './components/Navbar';
@@ -19,14 +21,21 @@ import Register from './pages/Register';
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const prevUserRef = React.useRef(user?._id);
 
   useEffect(() => {
+    if (prevUserRef.current && user && prevUserRef.current !== user._id) {
+      // Different user logged in - clear old data
+      dispatch(clearGigs());
+      dispatch(clearBids());
+    }
+    prevUserRef.current = user?._id;
     
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       dispatch(getMe());
     }
-  }, [dispatch]);
+  }, [user , dispatch]);
 
   // Initialize Socket.io when user is logged in
   useEffect(() => {

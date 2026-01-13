@@ -109,6 +109,7 @@ export const gigsSlice = createSlice({
       state.isError = false;
       state.message = '';
     },
+     clearGigs: () => initialState,
   },
   extraReducers: (builder) => {
     builder
@@ -188,5 +189,5 @@ export const gigsSlice = createSlice({
   },
 });
 
-export const { reset } = gigsSlice.actions;
+export const { reset,clearGigs } = gigsSlice.actions;
 export default gigsSlice.reducer;

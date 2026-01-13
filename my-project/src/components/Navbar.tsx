@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../store/slices/authSlice';
+import { clearGigs } from '../store/slices/gigsSlice'; 
+import { clearBids } from '../store/slices/bidsSlice'; 
 import { Briefcase, Plus, FileText, User, LogOut } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -11,9 +13,19 @@ const Navbar: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
 
   const handleLogout = async () => {
-    await dispatch(logout());
-    toast.success('Logged out successfully');
-    navigate('/');
+    try{
+      dispatch(clearGigs());  
+      dispatch(clearBids()); 
+      await dispatch(logout()).unwrap();
+      localStorage.removeItem('user');
+       toast.success('Logged out successfully');
+    navigate('/'); 
+    }
+    catch (error) {
+      toast.error('Logout failed');
+    }
+    
+   
   };
 
   return (
