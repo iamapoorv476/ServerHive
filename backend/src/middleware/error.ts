@@ -7,7 +7,6 @@ interface CustomError extends Error {
   errors?: any;
 }
 
-// Error handler middleware
 export const errorHandler = (
   err: CustomError,
   _req: Request,
@@ -17,26 +16,22 @@ export const errorHandler = (
   let error = { ...err };
   error.message = err.message;
 
-  // Log to console for dev
   if (process.env.NODE_ENV === 'development') {
     console.error(err);
   }
 
-  // Mongoose bad ObjectId
   if (err.name === 'CastError') {
     const message = 'Resource not found';
     error.message = message;
     error.statusCode = 404;
   }
 
-  // Mongoose duplicate key
   if (err.code === 11000) {
     const message = 'Duplicate field value entered';
     error.message = message;
     error.statusCode = 400;
   }
 
-  // Mongoose validation error
   if (err.name === 'ValidationError') {
     const message = Object.values(err.errors || {})
       .map((val: any) => val.message)
@@ -52,7 +47,6 @@ export const errorHandler = (
   });
 };
 
-// Not found middleware
 export const notFound = (req: Request, res: Response, next: NextFunction): void => {
   const error = new Error(`Not Found - ${req.originalUrl}`) as CustomError;
   res.status(404);
