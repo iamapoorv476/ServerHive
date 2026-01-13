@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
 app.use('/api/auth', auth_1.default);
 app.use('/api/gigs', gigs_1.default);
 app.use('/api/bids', bids_1.default);
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (_req, res) => {
     res.status(200).json({
         success: true,
         message: 'Server is running',
