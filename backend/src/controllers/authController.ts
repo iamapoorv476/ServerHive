@@ -22,10 +22,10 @@ const sendTokenResponse = (user: IUser, statusCode: number, res: Response): void
     ),
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict' as const,
+     sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
   };
 
-  res.status(statusCode).cookie('token', token, options).json({
+   res.status(statusCode).cookie('token', token, options).json({
     success: true,
     user: user.toSafeObject(),
     token,
