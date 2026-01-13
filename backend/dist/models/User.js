@@ -65,7 +65,6 @@ const userSchema = new mongoose_1.Schema({
 }, {
     timestamps: true,
 });
-// Hash password before saving
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         return next();
@@ -74,11 +73,9 @@ userSchema.pre('save', async function (next) {
     this.password = await bcryptjs_1.default.hash(this.password, salt);
     next();
 });
-// Method to compare passwords
 userSchema.methods.comparePassword = async function (candidatePassword) {
     return await bcryptjs_1.default.compare(candidatePassword, this.password);
 };
-// Method to get user data without sensitive information
 userSchema.methods.toSafeObject = function () {
     const obj = this.toObject();
     const { password, __v, ...safeUser } = obj;

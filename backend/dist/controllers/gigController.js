@@ -6,13 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMyGigs = exports.deleteGig = exports.updateGig = exports.createGig = exports.getGig = exports.getGigs = void 0;
 const Gig_1 = __importDefault(require("../models/Gig"));
 const Bid_1 = __importDefault(require("../models/Bid"));
-// @desc    Get all gigs with search and filter
-// @route   GET /api/gigs
-// @access  Public
 const getGigs = async (req, res, next) => {
     try {
         const { search, status, page = '1', limit = '10' } = req.query;
-        // Build query
         const query = {};
         // Search by title or description
         if (search) {
@@ -21,25 +17,20 @@ const getGigs = async (req, res, next) => {
                 { description: { $regex: search, $options: 'i' } },
             ];
         }
-        // Filter by status
         if (status) {
             query.status = status;
         }
         else {
-            // Default to open gigs only
             query.status = 'open';
         }
-        // Pagination
         const pageNum = parseInt(page);
         const limitNum = parseInt(limit);
         const skip = (pageNum - 1) * limitNum;
-        // Execute query
         const gigs = await Gig_1.default.find(query)
             .populate('ownerId', 'name email')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limitNum);
-        // Get total count for pagination
         const total = await Gig_1.default.countDocuments(query);
         res.status(200).json({
             success: true,
@@ -55,9 +46,6 @@ const getGigs = async (req, res, next) => {
     }
 };
 exports.getGigs = getGigs;
-// @desc    Get single gig
-// @route   GET /api/gigs/:id
-// @access  Public
 const getGig = async (req, res, next) => {
     try {
         const gig = await Gig_1.default.findById(req.params.id).populate('ownerId', 'name email');
@@ -78,9 +66,6 @@ const getGig = async (req, res, next) => {
     }
 };
 exports.getGig = getGig;
-// @desc    Create new gig
-// @route   POST /api/gigs
-// @access  Private
 const createGig = async (req, res, next) => {
     try {
         if (!req.user) {
@@ -116,9 +101,6 @@ const createGig = async (req, res, next) => {
     }
 };
 exports.createGig = createGig;
-// @desc    Update gig
-// @route   PUT /api/gigs/:id
-// @access  Private
 const updateGig = async (req, res, next) => {
     try {
         if (!req.user) {
@@ -167,9 +149,6 @@ const updateGig = async (req, res, next) => {
     }
 };
 exports.updateGig = updateGig;
-// @desc    Delete gig
-// @route   DELETE /api/gigs/:id
-// @access  Private
 const deleteGig = async (req, res, next) => {
     try {
         if (!req.user) {
@@ -187,7 +166,6 @@ const deleteGig = async (req, res, next) => {
             });
             return;
         }
-        // Make sure user is gig owner
         if (gig.ownerId.toString() !== req.user._id.toString()) {
             res.status(403).json({
                 success: false,
@@ -195,7 +173,6 @@ const deleteGig = async (req, res, next) => {
             });
             return;
         }
-        // Delete all bids associated with this gig
         await Bid_1.default.deleteMany({ gigId: req.params.id });
         await gig.deleteOne();
         res.status(200).json({
@@ -208,9 +185,6 @@ const deleteGig = async (req, res, next) => {
     }
 };
 exports.deleteGig = deleteGig;
-// @desc    Get user's gigs (as owner)
-// @route   GET /api/gigs/my/posted
-// @access  Private
 const getMyGigs = async (req, res, next) => {
     try {
         if (!req.user) {

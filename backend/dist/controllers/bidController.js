@@ -7,9 +7,6 @@ exports.deleteBid = exports.updateBid = exports.hireBid = exports.getMyBids = ex
 const mongoose_1 = __importDefault(require("mongoose"));
 const Bid_1 = __importDefault(require("../models/Bid"));
 const Gig_1 = __importDefault(require("../models/Gig"));
-// @desc    Submit a bid for a gig
-// @route   POST /api/bids
-// @access  Private
 const createBid = async (req, res, next) => {
     try {
         if (!req.user) {
@@ -84,9 +81,6 @@ const createBid = async (req, res, next) => {
     }
 };
 exports.createBid = createBid;
-// @desc    Get all bids for a specific gig
-// @route   GET /api/bids/:gigId
-// @access  Private (Owner only)
 const getBidsForGig = async (req, res, next) => {
     try {
         if (!req.user) {
@@ -97,7 +91,6 @@ const getBidsForGig = async (req, res, next) => {
             return;
         }
         const { gigId } = req.params;
-        // Check if gig exists
         const gig = await Gig_1.default.findById(gigId);
         if (!gig) {
             res.status(404).json({
@@ -106,7 +99,6 @@ const getBidsForGig = async (req, res, next) => {
             });
             return;
         }
-        // Make sure user is gig owner
         if (gig.ownerId.toString() !== req.user._id.toString()) {
             res.status(403).json({
                 success: false,
@@ -128,9 +120,6 @@ const getBidsForGig = async (req, res, next) => {
     }
 };
 exports.getBidsForGig = getBidsForGig;
-// @desc    Get user's bids (as freelancer)
-// @route   GET /api/bids/my/submitted
-// @access  Private
 const getMyBids = async (req, res, next) => {
     try {
         if (!req.user) {
@@ -154,9 +143,6 @@ const getMyBids = async (req, res, next) => {
     }
 };
 exports.getMyBids = getMyBids;
-// @desc    Hire a freelancer (BONUS: With MongoDB Transactions)
-// @route   PATCH /api/bids/:bidId/hire
-// @access  Private (Gig owner only)
 const hireBid = async (req, res, next) => {
     // Start a session for transaction
     const session = await mongoose_1.default.startSession();
@@ -181,7 +167,6 @@ const hireBid = async (req, res, next) => {
             });
             return;
         }
-        // Find the gig with session
         const gig = await Gig_1.default.findById(bid.gigId).session(session);
         if (!gig) {
             await session.abortTransaction();
@@ -191,7 +176,6 @@ const hireBid = async (req, res, next) => {
             });
             return;
         }
-        // Verify user is gig owner
         if (gig.ownerId.toString() !== req.user._id.toString()) {
             await session.abortTransaction();
             res.status(403).json({
@@ -200,7 +184,6 @@ const hireBid = async (req, res, next) => {
             });
             return;
         }
-        // Check if gig is still open
         if (gig.status !== 'open') {
             await session.abortTransaction();
             res.status(400).json({
@@ -209,27 +192,20 @@ const hireBid = async (req, res, next) => {
             });
             return;
         }
-        // ATOMIC OPERATIONS WITHIN TRANSACTION:
-        // 1. Update the hired bid status to 'hired'
         await Bid_1.default.findByIdAndUpdate(bidId, { status: 'hired' }, { session, new: true });
-        // 2. Update gig status to 'assigned' and store hired bid reference
         await Gig_1.default.findByIdAndUpdate(bid.gigId, {
             status: 'assigned',
             hiredBidId: bidId,
         }, { session, new: true });
-        // 3. Reject all other bids for this gig
         await Bid_1.default.updateMany({
             gigId: bid.gigId,
             _id: { $ne: bidId },
             status: 'pending',
         }, { status: 'rejected' }, { session });
-        // Commit the transaction
         await session.commitTransaction();
-        // Get updated data with population
         const updatedBid = await Bid_1.default.findById(bidId)
             .populate('freelancerId', 'name email')
             .populate('gigId', 'title description budget status');
-        // Emit Socket.io event for real-time notification
         const io = req.app.get('io');
         if (io) {
             io.to(bid.freelancerId.toString()).emit('bid-hired', {
@@ -246,19 +222,14 @@ const hireBid = async (req, res, next) => {
         });
     }
     catch (error) {
-        // Abort transaction on error
         await session.abortTransaction();
         next(error);
     }
     finally {
-        // End session
         session.endSession();
     }
 };
 exports.hireBid = hireBid;
-// @desc    Update bid (before hiring)
-// @route   PUT /api/bids/:bidId
-// @access  Private (Bid owner only)
 const updateBid = async (req, res, next) => {
     try {
         if (!req.user) {
@@ -309,9 +280,6 @@ const updateBid = async (req, res, next) => {
     }
 };
 exports.updateBid = updateBid;
-// @desc    Delete bid
-// @route   DELETE /api/bids/:bidId
-// @access  Private (Bid owner only)
 const deleteBid = async (req, res, next) => {
     try {
         if (!req.user) {

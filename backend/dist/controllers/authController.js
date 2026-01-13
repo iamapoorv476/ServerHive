@@ -6,16 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.logout = exports.getMe = exports.login = exports.register = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = __importDefault(require("../models/User"));
-// Generate JWT Token
-// Generate JWT Token
-// Generate JWT Token (using Promise to handle callback version)
 const generateToken = (id) => {
     const token = jsonwebtoken_1.default.sign({ id }, process.env.JWT_SECRET || 'fallback_secret');
     return token;
 };
-// Send token response with HttpOnly cookie
 const sendTokenResponse = (user, statusCode, res) => {
-    // Create token
     const token = generateToken(user._id.toString());
     const options = {
         expires: new Date(Date.now() + parseInt(process.env.COOKIE_EXPIRE || '7') * 24 * 60 * 60 * 1000),
@@ -29,9 +24,6 @@ const sendTokenResponse = (user, statusCode, res) => {
         token,
     });
 };
-// @desc    Register user
-// @route   POST /api/auth/register
-// @access  Public
 const register = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
@@ -65,9 +57,6 @@ const register = async (req, res, next) => {
     }
 };
 exports.register = register;
-// @desc    Login user
-// @route   POST /api/auth/login
-// @access  Public
 const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -79,7 +68,6 @@ const login = async (req, res, next) => {
             });
             return;
         }
-        // Check for user (include password for comparison)
         const user = await User_1.default.findOne({ email }).select('+password');
         if (!user) {
             res.status(401).json({
@@ -88,7 +76,6 @@ const login = async (req, res, next) => {
             });
             return;
         }
-        // Check if password matches
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
             res.status(401).json({
@@ -104,9 +91,6 @@ const login = async (req, res, next) => {
     }
 };
 exports.login = login;
-// @desc    Get current logged in user
-// @route   GET /api/auth/me
-// @access  Private
 const getMe = async (req, res, next) => {
     try {
         if (!req.user) {
@@ -134,9 +118,6 @@ const getMe = async (req, res, next) => {
     }
 };
 exports.getMe = getMe;
-// @desc    Logout user / clear cookie
-// @route   POST /api/auth/logout
-// @access  Private
 const logout = async (_req, res, next) => {
     try {
         res.cookie('token', 'none', {

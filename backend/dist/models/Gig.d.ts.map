@@ -1,1 +1,1 @@
-{"version":3,"file":"Gig.d.ts","sourceRoot":"","sources":["../../src/models/Gig.ts"],"names":[],"mappings":"AAAA,OAAO,QAAoB,MAAM,UAAU,CAAC;AAC5C,OAAO,EAAE,IAAI,EAAE,MAAM,UAAU,CAAC;AAgEhC,QAAA,MAAM,GAAG;;;;OAAyC,CAAC;AAEnD,eAAe,GAAG,CAAC"}
+{"version":3,"file":"Gig.d.ts","sourceRoot":"","sources":["../../src/models/Gig.ts"],"names":[],"mappings":"AAAA,OAAO,QAAoB,MAAM,UAAU,CAAC;AAC5C,OAAO,EAAE,IAAI,EAAE,MAAM,UAAU,CAAC;AA6DhC,QAAA,MAAM,GAAG;;;;OAAyC,CAAC;AAEnD,eAAe,GAAG,CAAC"}

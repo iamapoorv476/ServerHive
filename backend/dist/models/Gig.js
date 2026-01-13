@@ -72,21 +72,18 @@ const gigSchema = new mongoose_1.Schema({
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
 });
-// Virtual for getting the owner details
 gigSchema.virtual('owner', {
     ref: 'User',
     localField: 'ownerId',
     foreignField: '_id',
     justOne: true,
 });
-// Virtual for counting bids
 gigSchema.virtual('bidsCount', {
     ref: 'Bid',
     localField: '_id',
     foreignField: 'gigId',
     count: true,
 });
-// Index for faster searching
 gigSchema.index({ title: 'text', description: 'text' });
 gigSchema.index({ status: 1, createdAt: -1 });
 const Gig = mongoose_1.default.model('Gig', gigSchema);

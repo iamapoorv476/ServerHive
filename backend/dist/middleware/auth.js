@@ -9,11 +9,9 @@ const User_1 = __importDefault(require("../models/User"));
 const protect = async (req, res, next) => {
     try {
         let token;
-        // Check for token in cookies
         if (req.cookies.token) {
             token = req.cookies.token;
         }
-        // Make sure token exists
         if (!token) {
             res.status(401).json({
                 success: false,
@@ -22,9 +20,7 @@ const protect = async (req, res, next) => {
             return;
         }
         try {
-            // Verify token
             const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-            // Get user from token
             const user = await User_1.default.findById(decoded.id).select('-password');
             if (!user) {
                 res.status(401).json({
@@ -51,7 +47,6 @@ const protect = async (req, res, next) => {
     }
 };
 exports.protect = protect;
-// Optional authentication - doesn't fail if no token
 const optionalAuth = async (req, _res, next) => {
     try {
         let token;
@@ -65,7 +60,6 @@ const optionalAuth = async (req, _res, next) => {
                 req.user = user || undefined;
             }
             catch (error) {
-                // Token invalid but continue anyway
                 req.user = undefined;
             }
         }

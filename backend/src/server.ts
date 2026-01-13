@@ -50,7 +50,7 @@ io.on('connection', (socket) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/gigs', gigRoutes);
 app.use('/api/bids', bidRoutes);
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (_req, res) => {
   res.status(200).json({
     success: true,
     message: 'Server is running',
