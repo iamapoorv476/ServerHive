@@ -7,7 +7,11 @@ import { useAppDispatch,useAppSelector } from './store/hooks';
 import { BidHiredEvent } from './types';
 import Navbar from './components/Navbar';
 import PrivateRoute from './components/PrivateRoute';
-
+import Dashboard from './pages/Dashboard';
+import GigDetails from './pages/GigDetails';
+import CreateGig from './pages/CreateGig';
+import MyGigs from './pages/MyGigs';
+import MyBids from './pages/MyBids';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
