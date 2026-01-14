@@ -13,19 +13,22 @@ const Navbar: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
 
   const handleLogout = async () => {
-    try{
+    try {
+
       dispatch(clearGigs());  
       dispatch(clearBids()); 
       await dispatch(logout()).unwrap();
       localStorage.removeItem('user');
-       toast.success('Logged out successfully');
-    navigate('/'); 
+      
+      toast.success('Logged out successfully');
+    } catch (error) {
+      console.error('Logout error:', error);
+      
+      localStorage.removeItem('user');
+      toast.success('Logged out successfully');
+    } finally {
+      navigate('/', { replace: true });
     }
-    catch (error) {
-      toast.error('Logout failed');
-    }
-    
-   
   };
 
   return (
