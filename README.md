@@ -269,37 +269,6 @@ const GigCard: React.FC<GigCardProps> = ({ gig }) => {
 };
 ```
 
-## 🚀 Deployment
-
-### Deploy Backend to Render
-
-1. Create new Web Service on Render
-2. Connect GitHub repository
-3. Configure:
-   - **Root Directory:** `backend`
-   - **Build Command:** `npm install && npm run build`
-   - **Start Command:** `npm start`
-4. Add environment variables
-5. Deploy!
-
-### Deploy Frontend to Vercel
-
-1. Import project on Vercel
-2. Configure:
-   - **Root Directory:** `frontend`
-   - **Framework:** Vite
-   - **Build Command:** `npm run build`
-   - **Output Directory:** `dist`
-3. Add environment variables:
-```
-   VITE_API_URL=https://your-backend.onrender.com/api
-   VITE_SOCKET_URL=https://your-backend.onrender.com
-
-Deploy!
-
-Update Backend CORS
-After frontend deployment, update backend's CLIENT_URL environment variable to your Vercel URL.
-🧪 Testing the Application
 Test Authentication
 
 Register a new user
@@ -334,17 +303,6 @@ Open two browser tabs as User A
 Try to hire both User B and User C simultaneously
 Only one should succeed (MongoDB transactions prevent double-hiring)
 
-🐛 Common Issues & Solutions
-Issue: CORS Error
-Solution: Ensure CLIENT_URL in backend matches your frontend URL exactly (no trailing slash)
-Issue: MongoDB Connection Failed
-Solution: Whitelist 0.0.0.0/0 in MongoDB Atlas Network Access
-Issue: Cookies Not Being Sent
-Solution: Make sure withCredentials: true in axios and sameSite: 'none' in production
-Issue: TypeScript Compilation Errors
-Solution: Run npm install --save-dev @types/express @types/node etc.
-Issue: Render Backend Sleeping
-Solution: Free tier sleeps after 15min inactivity. First request takes 30-60 seconds.
 📊 Performance Optimizations
 
 ✅ MongoDB indexes on frequently queried fields
@@ -380,14 +338,8 @@ MIT License - feel free to use this project for learning or portfolio purposes!
 Aps
 Full Stack TypeScript Developer
 MERN Stack Expert
-🙏 Acknowledgments
 
-Anthropic's Claude for development assistance
-MongoDB for excellent documentation
-Vercel and Render for free hosting tiers
-The React and TypeScript communities
 
 📧 Contact
 For questions or feedback, feel free to reach out!
 
-⭐ If you found this project helpful, please give it a star!Claude is AI and can make mistakes. Please double-check responses.
